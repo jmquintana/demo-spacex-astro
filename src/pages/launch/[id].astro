@@ -1,0 +1,25 @@
+---
+import {getLaunchBy} from '../../services/spacex.ts'
+import Layout from '../../layouts/Layout.astro'
+import CardLaunch from '../../components/CardLaunch.astro'
+
+const {id} = Astro.params
+
+let launch
+
+if (id) {
+ launch = await getLaunchBy({id}) 
+}
+
+---
+
+
+<Layout title=`Lanzamiento ${launch?.flight_number}`>
+  <CardLaunch
+    id={launch?.id ?? ''}
+    success={launch?.success ?? false}
+    flightNumber={launch?.flight_number ?? 0}
+    details={launch?.details ?? ''}
+    img={launch?.links?.patch?.small  ?? ''}
+  />
+</Layout>
