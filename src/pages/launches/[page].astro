@@ -1,0 +1,21 @@
+---
+import {getLatestLaunches} from '../../services/spacex';
+import Layout from '../../layouts/Layout.astro';
+import Launches from '../../components/Launches.astro';
+import {type Doc} from '../../types/api';
+
+const {page} = Astro.params;
+
+let launches : Doc[] ;
+
+if (page !== undefined) {
+  launches = await getLatestLaunches({ page: Number(page) })
+} else {
+  launches = await getLatestLaunches({ page: 1})
+}
+
+---
+
+<Layout title=`Latest SpaceX Launches page #${page}`>
+  <Launches launches={launches} page={page} />
+</Layout>

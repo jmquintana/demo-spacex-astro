@@ -1,8 +1,25 @@
 ---
 import Layout from '../layouts/Layout.astro'
 import Launches from '../components/Launches.astro'
+import { getLatestLaunches } from '../services/spacex'
+
+const {launches, page} = Astro.props
+
+let pageNumber: number = 1
+let listOfLaunches = launches
+
+if (page === undefined || page === null || page === '' || isNaN(page) === true) {
+	pageNumber = 1
+}
+
+if (launches === undefined) {
+	listOfLaunches = await getLatestLaunches({page: pageNumber})
+}
+
+console.log({listOfLaunches, pageNumber})
+
 ---
 
 <Layout title="SpaceX Launches" >
-	<Launches/>
+	<Launches launches={listOfLaunches} page={pageNumber}/>
 </Layout>

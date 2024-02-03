@@ -1,25 +1,52 @@
 ---
-import {getLatestLaunches} from '../services/spacex.ts'
+// import {getLatestLaunches} from '../services/spacex.ts'
 import CardLaunch from './CardLaunch.astro';
+import { type Doc } from "../types/api.ts";
+import { getLatestLaunches } from '../services/spacex.ts';
 
-const launches = await getLatestLaunches({page:1});
+const {launches, page} = Astro.params
 
+let despegues : Doc[] = []
+let pageNumber : number = 1
+
+if (!page || parseInt(page) <= 1) {
+  pageNumber = 1
+} else {
+  pageNumber = parseInt(page)
+}
+
+if (!launches) {
+  despegues = await getLatestLaunches({ page: pageNumber })
+}
 ---
 
-<div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-  {launches.map(({
-    id,
-    links,
-    details,
-    flight_number: flightNumber,
-    success
-  } ) =>
-  <CardLaunch
-    id={id}
-    img={links.patch.small}
-    details={details}
-    flightNumber={flightNumber}
-    success={success}
-   />
-  )}
+
+<div class="flex flex-col justify-center align-middle">
+  <div class="flex justify-between py-4">
+    <a class="flex-row justify-content text-white cursor-pointer hover:bg-slate-700 focus:ring-4 focus:outline-none focus:ring-[#1da1f2]/50 font-medium rounded-lg px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-[#1da1f2]/55 hover:shadow-lg transition-all duration-200 ease-in-out hover:scale-110 scale-90 gap-x-2 opacity-70 hover:opacity-100" href={`/launches/${pageNumber-1}`}>Recientes</a>
+    <span
+    class="flex-row justify-content text-white hover:bg-slate-700 focus:ring-4 focus:outline-none focus:ring-[#1da1f2]/50 font-bold rounded-lg px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-[#1da1f2]/55 hover:shadow-lg transition-all duration-200 ease-in-out hover:scale-110 scale-90 gap-x-2 opacity-70 hover:opacity-100"
+    >
+      {pageNumber}
+    </span>
+    <a class="flex-row justify-content text-white cursor-pointer hover:bg-slate-700 focus:ring-4 focus:outline-none focus:ring-[#1da1f2]/50 font-medium rounded-lg px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-[#1da1f2]/55 hover:shadow-lg transition-all duration-200 ease-in-out hover:scale-110 scale-90 gap-x-2 opacity-70 hover:opacity-100" href={`/launches/${pageNumber+1}`}>Anteriores</a>
+  </div>
+  <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+    {
+    despegues.map(({
+      id,
+      links,
+      details,
+      flight_number: flightNumber,
+      success
+    } ) =>
+    <CardLaunch
+      id={id}
+      img={links.patch.small}
+      details={details}
+      flightNumber={flightNumber}
+      success={success}
+    />
+    )}
+  </div>
 </div>
